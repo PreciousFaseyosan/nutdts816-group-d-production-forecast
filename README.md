@@ -40,7 +40,6 @@ well level to sales-meter level. Sales points are coded SP01 to SP58; 37 were st
 2026. Volumes are gross monthly totals (MCF of gas; barrels of oil, with condensate counted as oil). Prices are
 NYMEX Henry Hub and WTI (actual settlements for months already delivered, the futures strip
 for later months) and are used only to express volume forecasts as indicative gross revenue.
-Read both PROVENANCE files before modelling.
 
 ## Loading the data (Colab)
 

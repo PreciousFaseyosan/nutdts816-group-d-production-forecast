@@ -1,0 +1,56 @@
+nymex_prices.csv and price_assumptions.csv  -  PROVENANCE
+=========================================================
+
+What it is
+  Benchmark prices for the 12 months after the production data ends
+  (May 2026 to April 2027), used only to turn forecast volumes into an
+  indicative gross revenue. Prices are treated as given, not forecast.
+
+Columns (nymex_prices.csv)
+  date                  first day of the delivery month (YYYY-MM-DD)
+  henry_hub_usd_mmbtu   NYMEX Henry Hub natural gas, USD per MMBtu
+  wti_usd_bbl           WTI crude oil, USD per barrel
+  price_type            "actual" = month already priced; "strip" = futures
+                        price for a month not yet delivered
+
+Sources
+  Henry Hub, May to Nov 2026 (actual): NYMEX final contract settlement prices,
+    NRG Energy, NYMEX Natural Gas Historical Prices,
+    https://www.nrg.com/resources/energy-tools/nymex-settlement-history.html
+    (accessed 6 November 2026).
+  Henry Hub, Dec 2026 to Apr 2027 (strip): NYMEX settle prices on
+    4 November 2026, NRG Energy daily market update,
+    https://www.nrg.com/content/dam/nrg/web/en/multimedia/documents/pdfs/daily-market-update/11-05-26/nymex.pdf
+  WTI, May to Sep 2026 (actual): monthly average Cushing, OK WTI spot price,
+    U.S. Energy Information Administration, series RWTC,
+    https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=RWTC&f=M
+  WTI, Oct 2026 (actual, partial): average of the three EIA weekly spot prices
+    published for October (weeks ending 2, 9 and 16 October: 98.07, 96.88,
+    99.93), EIA series RWTC weekly.
+  WTI, Nov 2026 to Apr 2027 (strip): NYMEX crude settle on 4 November 2026
+    from the same NRG update, which gives only three values: prompt 88.12
+    (used for Nov and Dec 2026), Q1 2027 average 85.71 (Jan to Mar 2027) and
+    12-month average 81.32 (used for Apr 2027 as an approximation).
+
+Assumptions (price_assumptions.csv)
+  btu_factor            1.05 MMBtu per MCF. Henry Hub is priced per MMBtu,
+                        production is measured in MCF.
+  gas_differential      -0.30 USD/MMBtu. Gas sold in South and East Texas
+                        trades close to Henry Hub; for example the Houston
+                        Ship Channel averaged 0.27 below Henry Hub in the
+                        first half of 2023 (EIA, Today in Energy, 21 Aug 2023,
+                        https://www.eia.gov/todayinenergy/detail.php?id=60180).
+  oil_differential      -5.00 USD/bbl below WTI for oil_bbl (oil and condensate),
+                        a round assumption for field condensate and light
+                        crude sold at the lease.
+  scenarios             strip x 0.80 (low) and strip x 1.20 (high).
+  These are assumptions, not the operator's realised prices or contract terms.
+
+Revenue formula (gross, 8/8ths, before royalties, taxes and fees)
+  gas revenue     = gas_mcf * btu_factor * (henry_hub_usd_mmbtu + gas_differential)
+  oil revenue     = oil_bbl * (wti_usd_bbl + oil_differential)
+
+Limitations
+  - A single snapshot of the strip; futures prices move every day.
+  - Revenue ranges built from volume prediction intervals reflect production
+    uncertainty only; the low and high scenarios give a rough view of price risk.

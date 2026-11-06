@@ -1,0 +1,67 @@
+production_sales_points.csv  -  PROVENANCE
+===========================================
+
+What it is
+  Monthly production volumes for 58 production sales points (sales meters)
+  belonging to one Texas operator, January 1993 to April 2026, in long format
+  (one row per sales point per month). Sales-point names are replaced by codes
+  SP01 to SP58; the code-to-name key is held privately by the group.
+
+Source
+  Railroad Commission of Texas (RRC), Production Data Query (public record),
+  well/lease-level monthly production reports. Retrieved in 2026 and
+  aggregated by the group to sales-point level.
+
+Columns
+  date             first day of the production month (YYYY-MM-DD)
+  sales_point      coded sales meter, SP01 to SP58
+  gas_mcf          gas produced in the month, thousand cubic feet (MCF);
+                   gas-well gas plus casinghead gas from oil leases
+  oil_bbl          liquids produced in the month, barrels: crude oil from
+                   oil leases plus condensate from gas wells, reported
+                   together as oil
+  producing_wells  number of wells (for oil sales points: leases) that reported
+                   a non-zero volume that month
+
+Companion file
+  production_sales_points_summary.csv: one row per sales point with first month,
+  last month with any production, status ("active" = produced between
+  January and April 2026, otherwise "inactive"), number of months and the
+  maximum producing_wells. 37 sales points are active and 21 are inactive.
+
+How it was built
+  1. Each RRC workbook holds one sheet per well plus a "Total" sheet. The
+     well sheets were summed for each month; gas-well gas and casinghead gas
+     both go into gas_mcf, and condensate and crude oil both go into oil_bbl.
+     The RRC records gas-well liquids as condensate and oil-lease liquids as
+     oil by well classification; the split was not verified, so the two are
+     combined.
+  2. An oil lease is reported to the RRC as one lease total, so the separate
+     well sheets of one lease repeat the same numbers. Identical sheets were
+     counted once (this affects SP11).
+  3. "NO RPT" in the RRC data means the well filed no report that month; it is
+     counted as zero volume and not as a producing well.
+  4. Each sales point starts at its first month with production (or January
+     1993, where the RRC download begins) and ends in April 2026.
+     April 2026 is the last month with complete filing: from January 2025 to
+     April 2026 exactly the same 33 well records show "NO RPT" every month
+     (wells permanently off line), but the count rises to 46 in May, 47 in
+     June and 122 in July 2026 as operators' reports were still arriving.
+     Every month in this file is therefore fully reported.
+  5. Check: the summed gas matches the workbook "Total" sheets exactly for every
+     sales point. (In the six oil-lease workbooks the Total sheet labels its
+     oil and gas columns the wrong way round; the values themselves match.)
+
+Things to know before modelling
+  - Volumes are monthly totals, so February is low partly because it has fewer
+    days. Divide by the number of days in the month for a daily rate.
+  - Zeros are filed reports: real shut-ins, workovers or no-sales months.
+  - Jumps in producing_wells mark new wells, recompletions or wells going
+    off line: these are structural breaks in a sales point's series.
+  - Volumes are gross (8/8ths) production, not the operator's net share, and
+    carry no prices or costs.
+
+Load (pandas)
+  import pandas as pd
+  df = pd.read_csv('data/production_sales_points.csv', parse_dates=['date'])
+  gas = df.pivot(index='date', columns='sales_point', values='gas_mcf')   # one column per sales point

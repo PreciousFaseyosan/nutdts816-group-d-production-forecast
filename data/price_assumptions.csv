@@ -1,0 +1,6 @@
+item,value,unit,note
+btu_factor,1.05,MMBtu per MCF,converts gas volume to heat content; typical wet gas is 1.00 to 1.10
+gas_differential,-0.30,USD per MMBtu,added to Henry Hub; South/East Texas hubs trade near Henry Hub
+oil_differential,-5.00,USD per bbl,added to WTI for oil_bbl (oil and condensate)
+price_scenario_low,0.80,multiplier,strip x 0.80
+price_scenario_high,1.20,multiplier,strip x 1.20

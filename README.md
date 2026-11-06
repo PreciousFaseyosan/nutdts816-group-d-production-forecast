@@ -3,7 +3,9 @@
 Forecasting monthly gas and oil production across 58 Texas production sales points.
 
 **Group members:** Faseyosan Precious Oluwagbohunmi, Salaam Olawumi Suliat
-**Course:** NUTDTS 816 Time Series Analysis, MSc Data Science, NUTM 
+
+**Course:** NUTDTS 816 Time Series Analysis, MSc Data Science, NUTM
+
 **Lecturer:** Dr Tolulope Adesina
 
 ## Forecasting question
